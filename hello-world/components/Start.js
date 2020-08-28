@@ -13,15 +13,19 @@ export default class Screen1 extends React.Component {
     return (
 
         <ImageBackground style={styles.backgroundImage} source={require('../assets/BackgroundImage.png')}>
+
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Hello World</Text>
+          </View>
           <View style={styles.inputContainer}>
-            <Text>Hello World</Text>
             <TextInput
               style={styles.input}
               onChangeText={(name) => this.setState({name})}
               value={this.state.name}
-              placeholder='Type here ...'
+              placeholder='Your name'
             />
             <Button
+              style={styles.button}
               title="Start Chatting"
               onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name })}
             />
@@ -46,6 +50,16 @@ const styles = StyleSheet.create({
     justifyContent:'flex-end',
     alignItems: 'center'
   },
+  titleContainer:{
+    flex: 1,
+    justifyContent: 'center'
+  },
+  title:{
+    color:'white',
+    fontSize: 40,
+    fontWeight:'bold'
+
+  },
   inputContainer:{
     backgroundColor: 'white',
     alignItems: 'center',
@@ -53,5 +67,12 @@ const styles = StyleSheet.create({
     height: '44%',
     width: '88%',
     marginBottom: 27
+  },
+  button:{
+    width: '88%',
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor:'red',
+    color:'#FFFFFF'
   }
 });
