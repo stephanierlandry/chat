@@ -6,9 +6,9 @@ export default class Screen1 extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { name: ' ' }
+    this.state = { name: ' ' },
+    this.state = { color: ' '}
   }
-
 
 
   render() {
@@ -32,16 +32,28 @@ export default class Screen1 extends React.Component {
             <View style={styles.backgroundColorContainer}>
               <Text style={styles.backgroundColorText}>{'Choose Background Color:'}</Text>
               <View style={styles.colorButtonContainer}>
-                <TouchableOpacity style={[styles.colorButton, styles.color1]}></TouchableOpacity>
-                <TouchableOpacity style={[styles.colorButton, styles.color2]}></TouchableOpacity>
-                <TouchableOpacity style={[styles.colorButton, styles.color3]}></TouchableOpacity>
-                <TouchableOpacity style={[styles.colorButton, styles.color4]}></TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.colorButton, styles.color1]}
+                  onPress={() => this.setState({color: '#090C08'})}>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.colorButton, styles.color2]}
+                  onPress={() => this.setState({color: '#474056'})}>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.colorButton, styles.color3]}
+                  onPress={() => this.setState({color: '#8A95A5'})}  >
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.colorButton, styles.color4]}
+                  onPress={() => this.setState({color: '#B9C6AE'})}>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.buttonContainer}>
               <Button
                 title="Start Chatting"
-                onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name })}
+                onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })}
                 buttonStyle={{backgroundColor: '#757083', width:320, height:60, justifyContent: 'center', borderRadius:2}}
               />
             </View>
