@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Button, TextInput, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ImageBackground } from 'react-native';
+import  { Button } from 'react-native-elements';
 
 export default class Screen1 extends React.Component {
 
@@ -26,14 +27,14 @@ export default class Screen1 extends React.Component {
               placeholder="Your Name"
               placeholderTextColor='#757083'
             />
+          </View>
+          <View style={styles.buttonContainer}>
             <Button
-              style={styles.button}
               title="Start Chatting"
               onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name })}
-              color = "#757083"
-              width = "88%"
+              buttonStyle={{backgroundColor: '#757083', width:320, height:60, justifyContent: 'center', borderRadius:2}}
             />
-            </View>
+          </View>
         </ImageBackground>
 
     );
@@ -74,12 +75,14 @@ const styles = StyleSheet.create({
     borderRadius:3,
     width: '88%',
     fontSize: 16,
-    marginTop: 27,
+    marginTop: 25,
     paddingLeft:7,
     opacity: 0.5,
     fontWeight: '300'
   },
-  button:{
-    width: '88%'
+  buttonContainer:{
+    flex:1,
+    justifyContent:'flex-end',
+    marginBottom: 25
   }
 });
