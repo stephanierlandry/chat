@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import  { Button } from 'react-native-elements';
 
 export default class Screen1 extends React.Component {
@@ -21,7 +21,11 @@ export default class Screen1 extends React.Component {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Hello World</Text>
           </View>
-          <View style={styles.container}>
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+            enabled={Platform.OS === "ios" ? true : false}>
             <View style={styles.inputContainer}>
               {/*onChangeText sets name state*/}
               <TextInput
@@ -62,7 +66,7 @@ export default class Screen1 extends React.Component {
                 buttonStyle={{backgroundColor: '#757083', width:320, height:60, justifyContent: 'center', borderRadius:2}}
               />
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </ImageBackground>
 
     );
