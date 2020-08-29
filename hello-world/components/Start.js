@@ -6,8 +6,10 @@ export default class Screen1 extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { name: ' ' },
-    this.state = { color: ' '}
+    this.state = {
+      name  : '',
+      color : ''
+    }
   }
 
 
@@ -24,7 +26,7 @@ export default class Screen1 extends React.Component {
               <TextInput
                 style={styles.input}
                 onChangeText={(name) => this.setState({name})}
-                value={this.state}
+                value={this.state.name}
                 placeholder="Your Name"
                 placeholderTextColor='#757083'
               />
