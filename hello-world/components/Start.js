@@ -23,6 +23,7 @@ export default class Screen1 extends React.Component {
           </View>
           <View style={styles.container}>
             <View style={styles.inputContainer}>
+              {/*onChangeText sets name state*/}
               <TextInput
                 style={styles.input}
                 onChangeText={(name) => this.setState({name})}
@@ -34,6 +35,7 @@ export default class Screen1 extends React.Component {
             <View style={styles.backgroundColorContainer}>
               <Text style={styles.backgroundColorText}>{'Choose Background Color:'}</Text>
               <View style={styles.colorButtonContainer}>
+                {/*onPress send sets color state*/}
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color1]}
                   onPress={() => this.setState({color: '#090C08'})}>
@@ -53,6 +55,7 @@ export default class Screen1 extends React.Component {
               </View>
             </View>
             <View style={styles.buttonContainer}>
+              {/*onPress sends name and color state to Chat component to display name and change background color*/}
               <Button
                 title="Start Chatting"
                 onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })}
@@ -74,6 +77,7 @@ const styles = StyleSheet.create({
     justifyContent:'flex-end',
     alignItems: 'center'
   },
+
   titleContainer:{
     flex: 1,
     justifyContent: 'center'
@@ -83,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontWeight:'600'
   },
+
   container: {
     backgroundColor: 'white',
     height: '44%',
@@ -109,6 +114,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     fontWeight: '300'
   },
+
   backgroundColorContainer:{
     flex:1,
     justifyContent:'center',
@@ -146,6 +152,7 @@ const styles = StyleSheet.create({
   color4:{
     backgroundColor:'#B9C6AE'
   },
+
   buttonContainer:{
     flex:1,
     justifyContent:'flex-end',
