@@ -16,8 +16,8 @@ export default class Chat extends React.Component {
    this.setState({
      messages: [
        {
-         _id: 1,
-         text: 'Hello developer',
+         _id: 3,
+         text: 'How are you?',
          createdAt: new Date(),
          user: {
            _id: 2,
@@ -27,7 +27,7 @@ export default class Chat extends React.Component {
        },
        {
          _id: 1,
-         text: 'How are you?',
+         text: 'Hello developer',
          createdAt: new Date(),
          user: {
            _id: 2,
