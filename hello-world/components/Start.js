@@ -48,48 +48,32 @@ export default class Screen1 extends React.Component {
                   onPress={() => this.setState({color: '#090C08'})}
                   accessible={true}
                   accessibilityLabel="Background color options"
-<<<<<<< HEAD
                   accessibilityHint="Let’s you choose the background color of your chat page."
                   accessibilityRole="button">
-=======
-                  accessibilityHint="Let’s you choose the background color of your chat page.">
->>>>>>> f3880052492b3a6185bbe925e3cbc82c7e5ca777
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color2]}
                   onPress={() => this.setState({color: '#474056'})}
                   accessible={true}
                   accessibilityLabel="Background color options"
-<<<<<<< HEAD
                   accessibilityHint="Let’s you choose the background color of your chat page."
                   accessibilityRole="button">
-=======
-                  accessibilityHint="Let’s you choose the background color of your chat page.">
->>>>>>> f3880052492b3a6185bbe925e3cbc82c7e5ca777
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color3]}
                   onPress={() => this.setState({color: '#8A95A5'})}
                   accessible={true}
                   accessibilityLabel="Background color options"
-<<<<<<< HEAD
                   accessibilityHint="Let’s you choose the background color of your chat page."
                   accessibilityRole="button">
-=======
-                  accessibilityHint="Let’s you choose the background color of your chat page.">
->>>>>>> f3880052492b3a6185bbe925e3cbc82c7e5ca777
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color4]}
                   onPress={() => this.setState({color: '#B9C6AE'})}
                   accessible={true}
                   accessibilityLabel="Background color options"
-<<<<<<< HEAD
                   accessibilityHint="Let’s you choose the background color of your chat page."
                   accessibilityRole="button">
-=======
-                  accessibilityHint="Let’s you choose the background color of your chat page.">
->>>>>>> f3880052492b3a6185bbe925e3cbc82c7e5ca777
                 </TouchableOpacity>
               </View>
             </View>
