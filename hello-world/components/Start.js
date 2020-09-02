@@ -34,6 +34,9 @@ export default class Screen1 extends React.Component {
                 value={this.state.name}
                 placeholder="Your Name"
                 placeholderTextColor='#757083'
+                accessible={true}
+                accessibilityLabel="Name Input"
+                accessibilityHint="Add your name to your chat"
               />
             </View>
             <View style={styles.backgroundColorContainer}>
@@ -42,19 +45,31 @@ export default class Screen1 extends React.Component {
                 {/*onPress send sets color state*/}
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color1]}
-                  onPress={() => this.setState({color: '#090C08'})}>
+                  onPress={() => this.setState({color: '#090C08'})}
+                  accessible={true}
+                  accessibilityLabel="Background color options"
+                  accessibilityHint="Let’s you choose the background color of your chat page.">
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color2]}
-                  onPress={() => this.setState({color: '#474056'})}>
+                  onPress={() => this.setState({color: '#474056'})}
+                  accessible={true}
+                  accessibilityLabel="Background color options"
+                  accessibilityHint="Let’s you choose the background color of your chat page.">
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color3]}
-                  onPress={() => this.setState({color: '#8A95A5'})}  >
+                  onPress={() => this.setState({color: '#8A95A5'})}
+                  accessible={true}
+                  accessibilityLabel="Background color options"
+                  accessibilityHint="Let’s you choose the background color of your chat page.">
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.colorButton, styles.color4]}
-                  onPress={() => this.setState({color: '#B9C6AE'})}>
+                  onPress={() => this.setState({color: '#B9C6AE'})}
+                  accessible={true}
+                  accessibilityLabel="Background color options"
+                  accessibilityHint="Let’s you choose the background color of your chat page.">
                 </TouchableOpacity>
               </View>
             </View>
