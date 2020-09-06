@@ -1,6 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { GiftedChat, InputToolbar } from 'react-native-gifted-chat'
+import { GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+
+const firebase = require('firebase');
+require('firebase/firestore');
+
+//Firebase configuration
+const firebaseConfig = {
+   apiKey: "AIzaSyBJauPjDWcmAnCdlSAqFGZ7XqN4dHyjxCk",
+   authDomain: "test-c13bb.firebaseapp.com",
+   databaseURL: "https://test-c13bb.firebaseio.com",
+   projectId: "test-c13bb",
+   storageBucket: "test-c13bb.appspot.com",
+   messagingSenderId: "602669976798",
+   appId: "1:602669976798:web:fc0ec7d5051436026b864f",
+   measurementId: "G-NGYJDELG16"
+ };
+
+if (!firebase.apps.length){
+firebase.initializeApp(firebaseConfig);
+}
 
 export default class Chat extends React.Component {
 
