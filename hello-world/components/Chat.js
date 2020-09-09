@@ -5,7 +5,7 @@ import { GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 const firebase = require('firebase');
 require('firebase/firestore');
 
-//Firebase configuration
+/* Firebase configuration */
 const firebaseConfig = {
    apiKey: "AIzaSyBJauPjDWcmAnCdlSAqFGZ7XqN4dHyjxCk",
    authDomain: "test-c13bb.firebaseapp.com",
@@ -24,14 +24,68 @@ firebase.initializeApp(firebaseConfig);
 export default class Chat extends React.Component {
 
   constructor() {
+
+    /* reference to messages collection */
+    this.referenceMessages = firebase.firestore().collection('messages');
+
     super();
     this.state = {
       messages: [],
+      user: {
+        _id: "",
+        name: "",
+        avatar: "",
+      }
     }
   }
 
-  /*messages follows Gifted Chat's format*/
+  /* retreives data in the messages collection */
+  onCollectionUpdate = (querySnapshot) => {
+    const messages = [];
+    // go through each document
+    querySnapshot.forEach((doc) => {
+      // get the QueryDocumentSnapshot's data
+      var data = doc.data();
+      messages.push({
+        _id: data._id,
+        text: data.text,
+        createdAt: data.createdAt.toDate(),
+        user: data.user
+      });
+    });
+    this.setState({
+      messages,
+    });
+  };
+
+  addMessages() {
+    this.referenceMessages.add({
+      _id: this.state.messages[0]._id,
+      text: this.state.messages[0].text || '',
+      createdAt: this.state.messages[0].createdAt,
+      user: this.state.user,
+      uid: this.state.uid,
+    });
+  }
+
+
+
+  /* messages follows Gifted Chat's format */
   componentDidMount() {
+
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        await firebase.auth().signInAnonymously();
+      }
+
+      //update user state with currently active user data
+      this.setState({
+        uid: user.uid,
+        loggedInText: 'Hello there',
+      });
+    });
+
+
    this.setState({
      messages: [
        {
@@ -64,7 +118,7 @@ export default class Chat extends React.Component {
    })
   }
 
-  /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat*/
+  /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
   onSend(messages = []) {
    this.setState(previousState => ({
      messages: GiftedChat.append(previousState.messages, messages),
