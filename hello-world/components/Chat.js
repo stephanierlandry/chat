@@ -35,6 +35,27 @@ export default class Chat extends React.Component {
       uid: ' '
     }
   }
+  /* read the messages in the storage */
+  async getMessages() {
+    let messages = '';
+    try {
+      messages = await AsyncStorage.getItem('messages') || [];
+      this.setState({
+        messages: JSON.parse(messages)
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  /* saves messages to asyncStorage*/
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   /* messages follows Gifted Chat's format */
   componentDidMount() {
@@ -59,6 +80,7 @@ export default class Chat extends React.Component {
     /* listen for collection changes for current user */
     this.unsubscribeMessageUser = this.referenceMessageUser.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
 
+    this.getMessages();
   }
 
   componentWillUnmount() {
@@ -75,11 +97,12 @@ export default class Chat extends React.Component {
          messages: GiftedChat.append(previousState.messages, messages),
        }),
        () => {
-         this.addMessages();
-
+         this.saveMessages();
        }
      );
    }
+
+
 
   /* retreives data in the messages collection */
   onCollectionUpdate = (querySnapshot) => {
