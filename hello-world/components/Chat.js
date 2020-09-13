@@ -35,27 +35,6 @@ export default class Chat extends React.Component {
       uid: ' '
     }
   }
-  /* read the messages in the storage */
-  async getMessages() {
-    let messages = '';
-    try {
-      messages = await AsyncStorage.getItem('messages') || [];
-      this.setState({
-        messages: JSON.parse(messages)
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  /* saves messages to asyncStorage*/
-  async saveMessages() {
-    try {
-      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
   /* messages follows Gifted Chat's format */
   componentDidMount() {
@@ -92,17 +71,13 @@ export default class Chat extends React.Component {
 
    /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
    onSend(messages = []) {
-     this.setState(
-       (previousState) => ({
-         messages: GiftedChat.append(previousState.messages, messages),
-       }),
-       () => {
-         this.saveMessages();
-       }
-     );
-   }
-
-
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, messages),
+      }), () => {
+        this.addMessages();
+        this.saveMessages();
+      });
+    }
 
   /* retreives data in the messages collection */
   onCollectionUpdate = (querySnapshot) => {
@@ -139,18 +114,29 @@ export default class Chat extends React.Component {
     });
   }
 
-  /* gets messages from Firebase */
-  getMessages = async () => {
-    let messages = [];
+  /* read the messages in the storage */
+  async getMessages() {
+    let messages = '';
     try {
-      messages = (await AsyncStorage.getItem("messages")) || [];
+      messages = await AsyncStorage.getItem('messages') || [];
       this.setState({
-        messages: JSON.parse(messages),
+        messages: JSON.parse(messages)
       });
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  /* saves messages to asyncStorage*/
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+
 
   render() {
     /*  sets user name as title */
