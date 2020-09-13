@@ -114,7 +114,7 @@ export default class Chat extends React.Component {
     });
   }
 
-  /* read the messages in the storage */
+  /* read the messages in the asyncStorage */
   async getMessages() {
     let messages = '';
     try {
@@ -136,7 +136,17 @@ export default class Chat extends React.Component {
     }
   }
 
-
+  /* deletes messages from asyncStorage*/
+  async deleteMessages() {
+  try {
+    await AsyncStorage.removeItem('messages');
+    this.setState({
+      messages: []
+    })
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
   render() {
     /*  sets user name as title */
@@ -150,13 +160,9 @@ export default class Chat extends React.Component {
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
         />
+        /* moves input container up when keyboard is open in Android*/
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
     );
   };
 }
-
-const styles = StyleSheet.create({
-
-
-})
