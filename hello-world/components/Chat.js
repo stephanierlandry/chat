@@ -197,6 +197,8 @@ renderInputToolbar = (props) => {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
+          renderBubble={this.renderBubble}
+          renderInputToolbar={this.renderInputToolbar}
         />
 
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
