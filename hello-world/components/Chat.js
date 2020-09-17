@@ -7,19 +7,7 @@ import NetInfo from '@react-native-community/netinfo';
 const firebase = require('firebase');
 require('firebase/firestore');
 
-/* Firebase configuration */
-const firebaseConfig = {
-   apiKey: "AIzaSyBJauPjDWcmAnCdlSAqFGZ7XqN4dHyjxCk",
-   authDomain: "test-c13bb.firebaseapp.com",
-   databaseURL: "https://test-c13bb.firebaseio.com",
-   projectId: "test-c13bb",
-   storageBucket: "test-c13bb.appspot.com",
-   messagingSenderId: "602669976798"
- };
 
-if (!firebase.apps.length){
-firebase.initializeApp(firebaseConfig);
-}
 
 export default class Chat extends React.Component {
 
@@ -36,49 +24,77 @@ export default class Chat extends React.Component {
       uid: ' ',
       isConnected: false
     }
-  }
 
-  /* messages follows Gifted Chat's format */
-  componentDidMount() {
-    /* fire.auth adds Firebase Auth to the app*/
-    /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
-      }
-    });
+    /* Firebase configuration */
 
-    /* create a reference to the active user's documents (shopping lists) */
-    this.referenceMessageUser = firebase.firestore().collection('messages')
-
-    /* listen for collection changes for current user */
-    this.unsubscribeMessageUser = this.referenceMessageUser.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
-
-    this.setState({
-       isConnected: false
-     });
-     this.getMessages();
-
-  }
-
-  componentWillUnmount() {
-     /* stop listening to authentication */
-     this.authUnsubscribe();
-     /* stop listening for changes */
-     this.unsubscribeMessageUser();
-   }
-
-   /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
-   onSend(messages = []) {
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, messages),
-      }), () => {
-        this.addMessages();
-        this.saveMessages();
+    if (!firebase.apps.length){
+    firebase.initializeApp({
+        apiKey: "AIzaSyBJauPjDWcmAnCdlSAqFGZ7XqN4dHyjxCk",
+        authDomain: "test-c13bb.firebaseapp.com",
+        databaseURL: "https://test-c13bb.firebaseio.com",
+        projectId: "test-c13bb",
+        storageBucket: "test-c13bb.appspot.com",
+        messagingSenderId: "602669976798",
+        appId: "1:602669976798:web:fc0ec7d5051436026b864f",
+        measurementId: "G-NGYJDELG16"
       });
     }
+  }
 
 
+
+  /* messages follows Gifted Chat's format */
+  /* fire.auth adds Firebase Auth to the app*/
+  /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
+  /* this.referenceMessageUser creates a reference to the active user's documents (shopping lists) */
+  /* this.unsubscribeMessageUsers listens for collection changes for current user */
+  componentDidMount() {
+    NetInfo.fetch().then(connection => {
+    if (connection.isConnected) {
+      this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        if (!user) {
+          await firebase.auth().signInAnonymously();
+        }
+
+        this.setState({
+          uid: user.uid,
+          messages: [],
+          isConnected: true
+        });
+
+        this.referenceMessageUser = firebase.firestore().collection('messages')
+
+        this.unsubscribeMessageUser = this.referenceMessageUser
+          .orderBy('createdAt', 'desc')
+          .onSnapshot(this.onCollectionUpdate);
+      });
+      console.log('online');
+    } else {
+      this.setState({
+        isConnected: false
+      });
+      this.getMessages();
+      console.log('offline');
+    }
+    });
+  }
+
+    /* stop listening to authentication */
+    /* stop listening for changes */
+  componentWillUnmount() {
+     this.authUnsubscribe();
+     this.unsubscribeMessageUser();
+  }
+
+   /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }), () => {
+      this.addMessages();
+      this.saveMessages();
+    });
+  }
 
   /* retreives data in the messages collection */
   onCollectionUpdate = (querySnapshot) => {
@@ -149,10 +165,23 @@ export default class Chat extends React.Component {
   }
 }
 
+renderInputToolbar(props) {
+  if (this.state.isConnected === false) {
+  } else {
+    return(
+      <InputToolbar
+      {...props}
+      />
+    );
+  }
+}
+
   render() {
     /*  sets user name as title */
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
+
+    console.log( this.state)
 
     return (
       <View style={{backgroundColor:this.props.route.params.color, flex: 1}}>
@@ -160,7 +189,7 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
-
+          renderInputToolbar={(props) => this.renderInputToolbar(props)}
         />
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
