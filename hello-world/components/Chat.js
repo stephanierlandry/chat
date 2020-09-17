@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
@@ -40,15 +40,6 @@ export default class Chat extends React.Component {
 
   /* messages follows Gifted Chat's format */
   componentDidMount() {
-
-    NetInfo.fetch().then(connection => {
-      if (connection.isConnected) {
-        console.log('online');
-      } else {
-        console.log('offline');
-      }
-    });
-
     /* fire.auth adds Firebase Auth to the app*/
     /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
@@ -56,6 +47,18 @@ export default class Chat extends React.Component {
         await firebase.auth().signInAnonymously();
       }
     });
+
+    /* create a reference to the active user's documents (shopping lists) */
+    this.referenceMessageUser = firebase.firestore().collection('messages')
+
+    /* listen for collection changes for current user */
+    this.unsubscribeMessageUser = this.referenceMessageUser.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
+
+    this.setState({
+       isConnected: false
+     });
+     this.getMessages();
+
   }
 
   componentWillUnmount() {
@@ -74,6 +77,8 @@ export default class Chat extends React.Component {
         this.saveMessages();
       });
     }
+
+
 
   /* retreives data in the messages collection */
   onCollectionUpdate = (querySnapshot) => {
@@ -144,30 +149,6 @@ export default class Chat extends React.Component {
   }
 }
 
-/* text bubble color change */
-renderBubble(props) {
-  return (
-    <Bubble
-      {...props}
-      wrapperStyle={{
-        right: {
-          backgroundColor: '#444',
-        },
-        left: {
-          backgroundColor: '#FF8C00',
-        },
-      }}
-    />
-  );
-}
-
-/* rendered if user is offline*/
-renderInputToolbar = (props) => {
-   if (this.state.isConnected === false) {
-     return <InputToolbar {...props} />;
-   }
- };
-
   render() {
     /*  sets user name as title */
     let name = this.props.route.params.name;
@@ -179,8 +160,7 @@ renderInputToolbar = (props) => {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
-          renderBubble={this.renderBubble}
-          renderInputToolbar={this.renderInputToolbar}
+
         />
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
