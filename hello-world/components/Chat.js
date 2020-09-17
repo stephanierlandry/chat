@@ -41,7 +41,6 @@ export default class Chat extends React.Component {
   /* messages follows Gifted Chat's format */
   componentDidMount() {
 
-<<<<<<< HEAD
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
         console.log('online');
@@ -55,39 +54,6 @@ export default class Chat extends React.Component {
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
         await firebase.auth().signInAnonymously();
-=======
-    /* NetInfo is used to find out is a user is online or not*/
-    NetInfo.fetch().then(connection => {
-      if(connection.isConnected){
-        /* fire.auth adds Firebase Auth to the app*/
-        /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-          if (!user) {
-            await firebase.auth().signInAnonymously();
-          }
-          /* update user state with currently active user data */
-          this.setState({
-            user: {
-             _id: user.uid,
-             name: this.props.navigation.state.params.name,
-             },
-             loggedInText: `${this.props.route.params.name} has entered the chat`,
-             messages: [],
-          });
-        });
-
-        /* create a reference to the active user's documents (shopping lists) */
-        this.referenceMessageUser = firebase.firestore().collection('messages')
-
-        /* listen for collection changes for current user */
-        this.unsubscribeMessageUser = this.referenceMessageUser.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
-
-      } else {
-        this.setState({
-          isConnected: false
-        });
-        this.getMessages();
->>>>>>> ea8d4b04a145d58299cef13139379d234442ec47
       }
     });
   }
@@ -216,10 +182,6 @@ renderInputToolbar = (props) => {
           renderBubble={this.renderBubble}
           renderInputToolbar={this.renderInputToolbar}
         />
-<<<<<<< HEAD
-=======
-
->>>>>>> ea8d4b04a145d58299cef13139379d234442ec47
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
     );
