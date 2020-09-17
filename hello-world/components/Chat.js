@@ -39,6 +39,14 @@ export default class Chat extends React.Component {
   /* messages follows Gifted Chat's format */
   componentDidMount() {
 
+    NetInfo.fetch().then(connection => {
+      if (connection.isConnected) {
+        console.log('online');
+      } else {
+        console.log('offline');
+      }
+    });
+
     /* fire.auth adds Firebase Auth to the app*/
     /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
@@ -160,7 +168,6 @@ export default class Chat extends React.Component {
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
         />
-        /* moves input container up when keyboard is open in Android*/
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
     );
