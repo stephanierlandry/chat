@@ -39,6 +39,8 @@ export default class Chat extends React.Component {
         measurementId: "G-NGYJDELG16"
       });
     }
+
+    this.referenceMessageUser = firebase.firestore().collection('messages')
   }
 
 
@@ -62,8 +64,6 @@ export default class Chat extends React.Component {
           isConnected: true
         });
 
-        this.referenceMessageUser = firebase.firestore().collection('messages')
-
         this.unsubscribeMessageUser = this.referenceMessageUser
           .orderBy('createdAt', 'desc')
           .onSnapshot(this.onCollectionUpdate);
@@ -82,8 +82,8 @@ export default class Chat extends React.Component {
     /* stop listening to authentication */
     /* stop listening for changes */
   componentWillUnmount() {
-     this.authUnsubscribe();
-     this.unsubscribeMessageUser();
+
+
   }
 
    /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
@@ -181,7 +181,7 @@ renderInputToolbar(props) {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    console.log( this.state)
+    console.log( this.authU)
 
     return (
       <View style={{backgroundColor:this.props.route.params.color, flex: 1}}>
