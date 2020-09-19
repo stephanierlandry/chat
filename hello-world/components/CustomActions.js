@@ -15,6 +15,51 @@ export default class CustomActions extends React.Component{
       image: null
     }
   }
+  pickImage = async () => {
+  const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+  if(status === 'granted') {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'Images',
+    }).catch(error => console.log(error));
+
+    if (!result.cancelled) {
+      this.setState({
+        image: result
+      });
+    }
+  }
+}
+
+takePhoto = async () => {
+  const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
+
+  if(status === 'granted'){
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    }).catch(error => console.log(error));
+
+    if (!result.cancelled) {
+      this.setState({
+        image: result
+      })
+    }
+  }
+}
+
+getLocation = async () => {
+ const { status } = await Permissions.askAsync(Permissions.LOCATION);
+ if(status === 'granted') {
+   let result = await Location.getCurrentPositionAsync({});
+
+   if (result) {
+     this.setState({
+       location: result
+     });
+   }
+ }
+}
+
 
   onActionPress = () => {
   const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
@@ -28,17 +73,21 @@ export default class CustomActions extends React.Component{
       switch (buttonIndex) {
         case 0:
           console.log('user wants to pick an image');
+          this.pickImage();
           return;
         case 1:
           console.log('user wants to take a photo');
+          this.takePhoto();
           return;
         case 2:
           console.log('user wants to get their location');
+          this.getLocation();
         default:
       }
     },
   );
 };
+
 
   render() {
    return (
