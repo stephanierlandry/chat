@@ -4,11 +4,10 @@ import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 
+import CustomActions from './CustomActions';
+
 const firebase = require('firebase');
 require('firebase/firestore');
-
-
-
 export default class Chat extends React.Component {
 
   constructor() {
@@ -176,6 +175,10 @@ renderInputToolbar(props) {
   }
 }
 
+renderCustomActions = (props) => {
+   return <CustomActions {...props} />;
+ };
+
   render() {
     /*  sets user name as title */
     let name = this.props.route.params.name;
@@ -190,6 +193,7 @@ renderInputToolbar(props) {
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
           renderInputToolbar={(props) => this.renderInputToolbar(props)}
+          renderActions={this.renderCustomActions}
         />
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
