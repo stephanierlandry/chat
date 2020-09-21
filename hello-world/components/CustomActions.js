@@ -6,6 +6,9 @@ import * as Location from 'expo-location';
 import MapView from 'react-native-maps';
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
+const firebase = require('firebase');
+require('firebase/firestore');
+
 export default class CustomActions extends React.Component{
 
   constructor(){
@@ -15,6 +18,7 @@ export default class CustomActions extends React.Component{
       image: null
     }
   }
+
   pickImage = async () => {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -24,9 +28,12 @@ export default class CustomActions extends React.Component{
     }).catch(error => console.log(error));
 
     if (!result.cancelled) {
-      this.setState({
-        image: result
-      });
+      try {
+        const imageUrlLink = await this.uploadImage(result.uri);
+        this.props.onSend({image: imageUrlLink});
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 }
@@ -39,10 +46,13 @@ takePhoto = async () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     }).catch(error => console.log(error));
 
-    if (!result.cancelled) {
-      this.setState({
-        image: result
-      })
+  if (!result.cancelled) {
+      try {
+          const imageUrlLink = await this.uploadImage(result.uri);
+          this.props.onSend({ image: imageUrlLink });
+      } catch (err) {
+          console.log(err);
+      }
     }
   }
 }
@@ -53,47 +63,85 @@ getLocation = async () => {
    let result = await Location.getCurrentPositionAsync({});
 
    if (result) {
-     this.setState({
-       location: result
-     });
+     this.props.onSend({
+      location: {
+          longitude: result.coords.longitude,
+          latitude: result.coords.latitude,
+      },
+    });
    }
  }
 }
 
+// uploading image to the cloud
+ uploadImage = async (uri) => {
+   const blob = await new Promise((resolve, reject) => {
+       const xhr = new XMLHttpRequest();
+       xhr.onload = (() => {
+           resolve(xhr.response);
+       });
+       xhr.onerror = ((e) => {
+           console.log(e);
+           reject(new TypeError('NETWORK REQUEST FAILED'));
+       });
+       xhr.responseType = 'blob';
+       xhr.open('GET', uri, true);
+       xhr.send(null);
+   });
 
-  onActionPress = () => {
-  const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
-  const cancelButtonIndex = options.length - 1;
-  this.context.actionSheet().showActionSheetWithOptions(
-    {
-      options,
-      cancelButtonIndex,
-    },
-    async (buttonIndex) => {
-      switch (buttonIndex) {
-        case 0:
-          console.log('user wants to pick an image');
-          this.pickImage();
-          return;
-        case 1:
-          console.log('user wants to take a photo');
-          this.takePhoto();
-          return;
-        case 2:
-          console.log('user wants to get their location');
-          this.getLocation();
-        default:
-      }
-    },
-  );
-};
+   const getImageName = uri.split('/');
+   const imageArrayLength = getImageName.length - 1;
+   const ref = firebase.storage().ref().child(getImageName[imageArrayLength]);
+   console.log('CustomActions', ref, getImageName[imageArrayLength]);
+   const snapshot = await ref.put(blob);
+
+   blob.close();
+
+ // spitting out image url
+   const imageURL = await snapshot.ref.getDownloadURL();
+   return imageURL;
+ }
+
+ onActionPress = () => {
+   const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
+   const cancelButtonIndex = options.length - 1;
+   this.context.actionSheet().showActionSheetWithOptions(
+     {
+       options,
+       cancelButtonIndex,
+     },
+     async (buttonIndex) => {
+       switch (buttonIndex) {
+         case 0:
+           console.log('user wants to pick an image');
+           this.pickImage();
+           return;
+         case 1:
+           console.log('user wants to take a photo');
+           this.takePhoto();
+           return;
+         case 2:
+           console.log('user wants to get their location');
+           this.getLocation();
+         default:
+       }
+     },
+   );
+ };
 
 
   render() {
    return (
-     <TouchableOpacity style={[styles.container]} onPress={this.onActionPress}>
-       <View style={[styles.wrapper, this.props.wrapperStyle]}>
-         <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
+     <TouchableOpacity
+        style={[styles.container]}
+        onPress={this.onActionPress}
+        accessible={true}
+        accessibilityLabel="More Actions"
+        accessibilityHint="Send an image or your location in the chat">
+       <View
+          style={[styles.wrapper, this.props.wrapperStyle]}>
+         <Text
+            style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
        </View>
      </TouchableOpacity>
    );
