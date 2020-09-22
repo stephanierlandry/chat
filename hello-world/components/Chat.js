@@ -57,30 +57,27 @@ export default class Chat extends React.Component {
   /* this.unsubscribeMessageUsers listens for collection changes for current user */
   componentDidMount() {
     NetInfo.fetch().then(connection => {
-    if (connection.isConnected) {
-      this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-          await firebase.auth().signInAnonymously();
-        }
+      if (connection.isConnected) {
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+          if (!user) {
+            await firebase.auth().signInAnonymously();
+          }
+          this.setState({
+            uid: user.uid,
+            messages: [],
+            isConnected: true
+          });
 
-        this.setState({
-          uid: user.uid,
-          messages: [],
-          isConnected: true
+          this.unsubscribeMessageUser = this.referenceMessageUser
+            .orderBy('createdAt', 'desc')
+            .onSnapshot(this.onCollectionUpdate);
         });
-
-        this.unsubscribeMessageUser = this.referenceMessageUser
-          .orderBy('createdAt', 'desc')
-          .onSnapshot(this.onCollectionUpdate);
-      });
-      console.log('online');
-    } else {
-      this.setState({
-        isConnected: false
-      });
-      this.getMessages();
-      console.log('offline');
-    }
+      } else {
+        this.setState({
+          isConnected: false
+        });
+        this.getMessages();
+      }
     });
   }
 
@@ -174,7 +171,7 @@ export default class Chat extends React.Component {
     }
   }
 
-renderInputToolbar(props) {
+renderInputToolbar = (props) => {
   if (this.state.isConnected === false) {
   } else {
     return(
@@ -185,7 +182,7 @@ renderInputToolbar(props) {
   }
 }
 
-renderCustomView (props) {
+renderCustomView = (props) => {
    const { currentMessage} = props;
    if (currentMessage.location) {
      return (
@@ -216,7 +213,6 @@ renderCustomActions = (props) => {
     /*  sets user name as title */
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
-    console.log(this.state)
 
     return (
       <View style={{backgroundColor:this.props.route.params.color, flex: 1}}>
@@ -227,12 +223,12 @@ renderCustomActions = (props) => {
             style={{ width: 200, height: 200 }} />}
         <GiftedChat
           messages={this.state.messages}
-          onSend={(messages) => this.onSend(messages)}
+          image={this.state.image}
           user={this.state.user}
+          onSend={(messages) => this.onSend(messages)}
           renderInputToolbar={(props) => this.renderInputToolbar(props)}
           renderActions={this.renderCustomActions}
-          renderCustomView={this.renderCustomView}
-          image={this.state.image}
+          renderCustomView={this.renderCustomView}  
         />
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
