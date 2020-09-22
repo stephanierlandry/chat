@@ -141,7 +141,7 @@ export default class Chat extends React.Component {
   }
 
   /* read the messages in the asyncStorage */
-  async getMessages() {
+  getMessages = async () => {
     let messages = '';
     try {
       messages = await AsyncStorage.getItem('messages') || [];
@@ -154,7 +154,7 @@ export default class Chat extends React.Component {
   };
 
   /* saves messages to asyncStorage*/
-  async saveMessages() {
+ saveMessages = async () => {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
     } catch (error) {
@@ -163,16 +163,16 @@ export default class Chat extends React.Component {
   }
 
   /* deletes messages from asyncStorage*/
-  async deleteMessages() {
-  try {
-    await AsyncStorage.removeItem('messages');
-    this.setState({
-      messages: []
-    })
-  } catch (error) {
-    console.log(error.message);
+  deleteMessages = async () => {
+    try {
+      await AsyncStorage.removeItem('messages');
+      this.setState({
+        messages: []
+      })
+    } catch (error) {
+      console.log(error.message);
+    }
   }
-}
 
 renderInputToolbar(props) {
   if (this.state.isConnected === false) {
