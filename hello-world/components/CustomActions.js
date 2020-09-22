@@ -1,9 +1,23 @@
+/**
+*@description this component handles all of the communication features
+*@requires React
+*@requires Prop-Types
+*@requires Expo-Permissions
+*@requires Expo-Image-Picker
+*@requires Expo-Location
+*@requires React-Native
+*@requires Firebase
+*@requires Firestore
+*/
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View, Text, TouchableOpacity, StyleSheet
+} from 'react-native';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -12,11 +26,14 @@ export default class CustomActions extends React.Component {
   constructor() {
     super();
     this.state = {
-
     }
   }
 
-  // pick an image from user's library. asks for permission first
+  /**
+  * pick an image from user's library. asks for permission first
+  * @function pickImage
+  * @async
+  */
   pickImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === 'granted') {
@@ -35,7 +52,11 @@ export default class CustomActions extends React.Component {
     }
   }
 
-// takes a photo. asks for permission first
+  /**
+  * takes a photo. asks for permission first
+  * @function takePhoto
+  * @async
+  */
 takePhoto = async () => {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
 
@@ -55,7 +76,11 @@ takePhoto = async () => {
   }
 }
 
-// gets users location. asks for permission first
+/**
+*gets users location. asks for permission first
+* @function getLocation
+* @async
+*/
 getLocation = async () => {
   const { status } = await Permissions.askAsync(Permissions.LOCATION);
   if (status === 'granted') {
@@ -72,7 +97,11 @@ getLocation = async () => {
   }
 }
 
-// uploading image to the cloud
+/**
+*uploading image to the cloud
+* @function uploadImage
+* @async
+*/
  uploadImage = async (uri) => {
    const blob = await new Promise((resolve, reject) => {
      const xhr = new XMLHttpRequest();
@@ -100,7 +129,11 @@ getLocation = async () => {
    return imageURL;
  }
 
- // Action sheet created that have additional tasks and calls the corresponding funciton
+ /**
+ *Action sheet created that have additional tasks and calls the corresponding funciton
+ * @function onActionPress
+ * @async
+ */
  onActionPress = () => {
    const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
    const cancelButtonIndex = options.length - 1;

@@ -1,3 +1,10 @@
+/**
+*@description this component handles the landing page
+*@requires React
+*@requires React-Native
+*@requires React-Native-Elements
+*/
+
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Button } from 'react-native-elements';

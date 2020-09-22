@@ -1,3 +1,16 @@
+/**
+*@description this component handles the chat page
+*@requires React
+*@requires React-Native
+*@requires React-Native-Gifted-Chat
+*@requires React-Native-Maps
+*@requires React-Native-Community/Async-Storage
+*@requires React-Native-Community/NetInfo
+*@requires CustomActions
+*@requires Firebase
+*@requires Firestore
+*/
+
 import React from 'react';
 import { View, KeyboardAvoidingView } from 'react-native';
 
@@ -46,11 +59,13 @@ export default class Chat extends React.Component {
     this.referenceMessageUser = firebase.firestore().collection('messages')
   }
 
-  /* messages follows Gifted Chat's format */
-  /* fire.auth adds Firebase Auth to the app*/
-  /* onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes and returns an unsubscribe() function*/
-  /* this.referenceMessageUser creates a reference to the active user's documents (shopping lists) */
-  /* this.unsubscribeMessageUsers listens for collection changes for current user */
+  /* messages follows Gifted Chat's format
+   fire.auth adds Firebase Auth to the app
+   onAuthStateChanged is an observer that’s called whenever the user's sign-in state changes
+   and returns an unsubscribe() function
+   this.referenceMessageUser creates a reference to the active user's documents (messages)
+  this.unsubscribeMessageUsers listens for collection changes for current user */
+
   componentDidMount() {
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
@@ -84,7 +99,12 @@ export default class Chat extends React.Component {
     this.unsubscribeMessageUser();
   }
 
-   /* the message a user has just sent gets appended to the state messages so that it can be displayed in the chat */
+  /**
+  * the message a user has just sent gets appended to the state messages so that
+  *it can be displayed in the chat
+  *@function onSend
+  *@param {object} messages
+  */
   onSend(messages = []) {
     this.setState((previousState) => ({
       messages: GiftedChat.append(previousState.messages, messages),
@@ -94,7 +114,19 @@ export default class Chat extends React.Component {
     });
   }
 
-  /* retreives data in the messages collection */
+  /**
+  * retreives data in the messages collection
+  *@function onCollectionUpdate
+  *@param {string} _id
+  *@param {string} text
+  *@param {number} createdAt
+  *@param {object} user
+  *@param {string} user._id
+  *@param {string} user.name
+  *@param {string} user.avatar
+  *@param {string} image
+  *@param {string} location
+  */
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
     /* go through each document */
@@ -119,7 +151,11 @@ export default class Chat extends React.Component {
     });
   };
 
-  /* read the messages in the asyncStorage */
+  /**
+  * read the messages in the asyncStorage
+  *@function getMessages
+  *@async
+  */
   getMessages = async () => {
     let messages = '';
     try {
@@ -132,7 +168,11 @@ export default class Chat extends React.Component {
     }
   };
 
-  /* saves messages to asyncStorage */
+  /**
+  * saves messages to asyncStorage
+  *@function saveMessages
+  *@async
+  */
  saveMessages = async () => {
    try {
      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
@@ -141,7 +181,11 @@ export default class Chat extends React.Component {
    }
  }
 
-  /* deletes messages from asyncStorage */
+  /**
+   * deletes messages from asyncStorage
+   *@function deleteMessages
+   *@async
+   */
   deleteMessages = async () => {
     try {
       await AsyncStorage.removeItem('messages');
@@ -153,7 +197,18 @@ export default class Chat extends React.Component {
     }
   }
 
-  /* adds message user + message data */
+  /**
+  * adds message user + message data
+  *@function addMessages
+  *@param {string} _id
+  *@param {string} text
+  *@param {string} createdAt
+  *@param {string} user
+  *@param {string} uid
+  *@param {boolean} sent
+  *@param {string} image
+  *@param {string} location
+  */
   addMessages() {
     this.referenceMessageUser.add({
       id: this.state.messages[0]._id,
@@ -167,65 +222,82 @@ export default class Chat extends React.Component {
     });
   }
 
-renderInputToolbar = (props) => {
-  if (this.state.isConnected === false) {
-  } else {
-    return(
-      <InputToolbar
-      {...props}
-      />
-    );
+  /**
+   * hides InputToolbar if user is offline. makes it so that users cannot send messages if offline
+   *@function renderInputToolbar
+   */
+  renderInputToolbar = (props) => {
+    if (this.state.isConnected === false) {
+    } else {
+      return(
+        <InputToolbar
+        {...props}
+        />
+      );
+    }
   }
-}
 
-renderCustomView = (props) => {
-  const { currentMessage} = props;
-  if (currentMessage.location) {
+  /**
+   *renders the map
+   *@function renderCustomView
+   */
+  renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={
+            {
+              width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3
+            }
+          }
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
+  /**
+   *renders the communication features
+   *(take a picture, choose a picture from user library, share location)
+   *@function renderCustomActions
+   */
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  render() {
+    /*  sets user name as title */
+    const name = this.props.route.params.name;
+    this.props.navigation.setOptions({ title: name });
+
     return (
-      <MapView
-        style={{width: 150,
-          height: 100,
-          borderRadius: 13,
-          margin: 3}}
-        region={{
-          latitude: currentMessage.location.latitude,
-          longitude: currentMessage.location.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
+      <View style={{ backgroundColor:this.props.route.params.color, flex: 1 }}>
+        {this.state.image &&
+        <Image
+          source={{ uri: this.state.image.uri }}
+          style={{ width: 200, height: 200 }}
+        />}
+        <GiftedChat
+          messages={this.state.messages}
+          image={this.state.image}
+          user={this.state.user}
+          onSend={(messages) => this.onSend(messages)}
+          renderInputToolbar={(props) => this.renderInputToolbar(props)}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
+        />
+        { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+      </View>
     );
-  }
-  return null;
-}
-
-
-renderCustomActions = (props) => {
-  return <CustomActions {...props} />;
- };
-
-render() {
-/*  sets user name as title */
-const name = this.props.route.params.name;
-this.props.navigation.setOptions({ title: name });
-
-  return (
-    <View style={{backgroundColor:this.props.route.params.color, flex: 1}}>
-      {this.state.image &&
-      <Image
-        source={{ uri: this.state.image.uri }}
-        style={{ width: 200, height: 200 }} />}
-      <GiftedChat
-        messages={this.state.messages}
-        image={this.state.image}
-        user={this.state.user}
-        onSend={(messages) => this.onSend(messages)}
-        renderInputToolbar={(props) => this.renderInputToolbar(props)}
-        renderActions={this.renderCustomActions}
-        renderCustomView={this.renderCustomView}
-      />
-      { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-    </View>
-  );
 }
 }
