@@ -19,6 +19,8 @@ export default class CustomActions extends React.Component{
     }
   }
 
+
+  // pick an image from user's library. asks for permission first
   pickImage = async () => {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -38,6 +40,7 @@ export default class CustomActions extends React.Component{
   }
 }
 
+// takes a photo. asks for permission first
 takePhoto = async () => {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
 
@@ -57,6 +60,7 @@ takePhoto = async () => {
   }
 }
 
+// gets users location. asks for permission first
 getLocation = async () => {
  const { status } = await Permissions.askAsync(Permissions.LOCATION);
  if(status === 'granted') {
@@ -92,7 +96,6 @@ getLocation = async () => {
    const getImageName = uri.split('/');
    const imageArrayLength = getImageName.length - 1;
    const ref = firebase.storage().ref().child(getImageName[imageArrayLength]);
-   console.log('CustomActions', ref, getImageName[imageArrayLength]);
    const snapshot = await ref.put(blob);
 
    blob.close();
@@ -102,6 +105,7 @@ getLocation = async () => {
    return imageURL;
  }
 
+//Action sheet created that have additional tasks and calls the corresponding funciton
  onActionPress = () => {
    const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
    const cancelButtonIndex = options.length - 1;
