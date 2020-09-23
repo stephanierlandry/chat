@@ -9,7 +9,7 @@ For more information on Expo, explore their [documentation](https://docs.expo.io
 
 This app saves all user data to a Cloud Firestore from Google Firebase. To utilize this on your own, sign up for an [account](https://firebase.google.com/) and change the **firebase configuration** within the Chat.js file.
 
-![GitHub Logo](/helloworld/assets/firebaseConfig.png)
+![GitHub Logo](./helloworld/assets/firebaseConfig.png)
     
 ## Dependencies
 - react
